@@ -1,0 +1,116 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/textLevelNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Level X" />
+
+            <Button
+                android:id="@+id/btnStart"
+                style="android:buttonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/button2"
+                android:onClick="startBtn"
+                android:text="Start" />
+
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/button1"
+                android:onClick="resetBtn"
+                android:text="Reset" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/myFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.90" >
+
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnStraight"
+                style="android:imageButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/button2"
+                android:onClick="straightBtn"
+                android:src="@drawable/straighttrack"
+                android:text="Straight" />
+
+            <ImageButton
+                android:id="@+id/btnDiagonal"
+                style="android:imageButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="diagonalBtn"
+                android:src="@drawable/diagonaltrack"
+                android:text="Left" />
+
+            <ImageButton
+                android:id="@+id/btnCurveRight"
+                style="android:imageButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/button1"
+                android:onClick="rightCurveBtn"
+                android:src="@drawable/curverighttrack"
+                android:text="Right" />
+
+            <ImageButton
+                android:id="@+id/btnCurveLeft"
+                style="android:imageButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="leftCurveBtn"
+                android:src="@drawable/curvelefttrack"
+                android:text="Left" />
+
+            <android.support.v7.widget.Space
+                android:id="@+id/space1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.Space
+                android:id="@+id/space2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/btnRotate"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:onClick="rotateBtn"
+                android:src="@drawable/straighttrack" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
