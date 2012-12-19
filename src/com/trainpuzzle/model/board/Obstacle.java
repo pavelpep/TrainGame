@@ -1,7 +1,6 @@
 package com.trainpuzzle.model.board;
 
 
-
 public class Obstacle implements java.io.Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -15,12 +14,11 @@ public class Obstacle implements java.io.Serializable{
 	
 	private ObstacleType obstacle;
 	
-	
 	/* Public Interface */
 	
 	public Obstacle(ObstacleType type) {
 		this.obstacle = type;
-
+		
 	}
 	
 	/* Getters and Setters  */
@@ -32,5 +30,6 @@ public class Obstacle implements java.io.Serializable{
 	public void setType(ObstacleType obstacle) {
 		this.obstacle = obstacle;
 	}
+
 
 }

@@ -10,6 +10,7 @@ import com.trainpuzzle.model.board.Track;
 import com.trainpuzzle.model.board.Train;
 import com.trainpuzzle.model.board.Landscape.LandscapeType;
 import com.trainpuzzle.model.board.Obstacle.ObstacleType;
+import com.trainpuzzle.model.board.TrainCar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ private Bitmap diagonalTrack = BitmapFactory.decodeResource(getResources(), R.dr
 private Bitmap curveLeftTrack = BitmapFactory.decodeResource(getResources(), R.drawable.curvelefttrack);
 private Bitmap curveRightTrack = BitmapFactory.decodeResource(getResources(), R.drawable.curverighttrack);
 private Bitmap trainPic = BitmapFactory.decodeResource(getResources(), R.drawable.train);
+private Bitmap trainCarPic = BitmapFactory.decodeResource(getResources(), R.drawable.traincar);
 
 private Board board = new Board();
 private Train train = new Train();
@@ -81,9 +83,9 @@ public void onDraw(Canvas canvas)
 	canvas.drawColor(Color.BLACK);
 	
 
-	for (int x = 0; x < board.NUMBER_OF_COLUMNS; x++)
+	for (int x = 0; x < board.columns; x++)
 	{
-		for (int y = 0; y < board.NUMBER_OF_ROWS; y++)
+		for (int y = 0; y < board.rows; y++)
 		{
 	    //Log.d("Draw tile:", " " + x + "," + y);
 		
@@ -92,7 +94,7 @@ public void onDraw(Canvas canvas)
 		drawTrack(canvas,x,y);	
 		}
 	}
-	
+	drawTrainCars(canvas);
 	drawTrain(canvas);
 }
 
@@ -225,7 +227,18 @@ private void drawTrain(Canvas canvas){
 	canvas.drawBitmap(trainImage, x * trainPic.getWidth() - scrollX, y * trainPic.getHeight() - scrollY, null);
 		
 }
-
+private void drawTrainCars(Canvas canvas){
+	Bitmap trainCarImage;
+	TrainCar[] trainCars = train.getTrainCars();
+	for(TrainCar trainCar: trainCars){
+		int x = trainCar.getLocation().getColumn();
+		int y = trainCar.getLocation().getRow();
+		int headingInt = trainCar.getHeading().ordinal();
+		
+		trainCarImage = rotateBitmap(trainCarPic, (headingInt + 5)% 8);		
+		canvas.drawBitmap(trainCarImage, x * trainCarPic.getWidth() - scrollX, y * trainCarPic.getHeight() - scrollY, null);
+	}
+}
 void testDraw(Canvas canvas){
 	
 
@@ -317,7 +330,7 @@ public void handleScroll(float distX, float distY)
 
       if(distX > 20.0)
       {
-           if(scrollX < board.NUMBER_OF_COLUMNS*80 - this.getWidth())
+           if(scrollX < board.columns*80 - this.getWidth())
            {
                 scrollX += 40;
            }
@@ -334,7 +347,7 @@ public void handleScroll(float distX, float distY)
       // Y-AXIS //////////////////////////////////
       if(distY > 20.0)
       {
-           if(scrollY < board.NUMBER_OF_ROWS*80 - this.getHeight())
+           if(scrollY < board.rows*80 - this.getHeight())
            {
                 scrollY += 40;
            }
@@ -347,7 +360,7 @@ public void handleScroll(float distX, float distY)
            }
       }              
       ////////////////////////////////////////////
-      if((scrollX <= board.NUMBER_OF_COLUMNS*80) && (scrollY <= board.NUMBER_OF_ROWS*80))
+      if((scrollX <= board.columns*80) && (scrollY <= board.rows*80))
       {
            //adapt = Bitmap.createBitmap(bmp, scrollX, scrollY, 320, 480);
            invalidate();

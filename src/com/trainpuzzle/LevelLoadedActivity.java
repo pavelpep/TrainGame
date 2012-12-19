@@ -35,7 +35,8 @@ public class LevelLoadedActivity extends Activity implements OnGestureListener, 
 	BoardPanel boardPanel;
 	private GestureDetector gestureScanner;
 	private Train train;
-	private Track trackToBePlaced = new Track(new Connection(CompassHeading.EAST, CompassHeading.WEST));
+	private Track trackToBePlaced = new Track(new Connection(CompassHeading.EAST, CompassHeading.WEST),TrackType.STRAIGHT_TRACK);
+
 
 	    
     @Override
@@ -112,22 +113,22 @@ public class LevelLoadedActivity extends Activity implements OnGestureListener, 
 	}
 	
 	public void straightBtn(View view) {
-		trackToBePlaced = new Track(new Connection(CompassHeading.EAST, CompassHeading.WEST));
+		trackToBePlaced = new Track(new Connection(CompassHeading.EAST, CompassHeading.WEST),TrackType.STRAIGHT_TRACK);
 		ImageButton ib = (ImageButton)findViewById(R.id.btnRotate);
 		ib.setImageBitmap(boardPanel.drawTrack(trackToBePlaced));
 	}
 	public void diagonalBtn(View view) {
-		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHWEST, CompassHeading.SOUTHEAST));
+		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHWEST, CompassHeading.SOUTHEAST),TrackType.DIAGONAL_TRACK);
 		ImageButton ib = (ImageButton)findViewById(R.id.btnRotate);
 		ib.setImageBitmap(boardPanel.drawTrack(trackToBePlaced));
 	}
 	public void leftCurveBtn(View view) {
-		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHWEST, CompassHeading.SOUTH));
+		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHWEST, CompassHeading.SOUTH),TrackType.CURVELEFT_TRACK);
 		ImageButton ib = (ImageButton)findViewById(R.id.btnRotate);
 		ib.setImageBitmap(boardPanel.drawTrack(trackToBePlaced));
 	}
 	public void rightCurveBtn(View view) {
-		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHEAST, CompassHeading.SOUTH));
+		trackToBePlaced = new Track(new Connection(CompassHeading.NORTHEAST, CompassHeading.SOUTH), TrackType.CURVERIGHT_TRACK);
 		ImageButton ib = (ImageButton)findViewById(R.id.btnRotate);
 		ib.setImageBitmap(boardPanel.drawTrack(trackToBePlaced));
 	}

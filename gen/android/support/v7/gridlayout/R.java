@@ -233,9 +233,10 @@ containing a value of this type.
         public static final int temptrack=0x7f02000e;
         public static final int track=0x7f02000f;
         public static final int train=0x7f020010;
-        public static final int trees=0x7f020011;
-        public static final int water=0x7f020012;
-        public static final int water2=0x7f020013;
+        public static final int traincar=0x7f020011;
+        public static final int trees=0x7f020012;
+        public static final int water=0x7f020013;
+        public static final int water2=0x7f020014;
     }
     public static final class id {
         public static final int alignBounds=0x7f040002;

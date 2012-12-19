@@ -4,32 +4,44 @@ package com.trainpuzzle.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import com.thoughtworks.xstream.*;
-import com.trainpuzzle.model.level.*;
+
+
+import com.trainpuzzle.model.level.Campaign;
+import com.trainpuzzle.factory.LevelFactory;
+import com.trainpuzzle.model.level.Level;
 
 
 public class CampaignManager {
 	private Level levelLoaded;
-	private LevelGenerator levelGenerator = new LevelGenerator();
+	private LevelFactory levelFactory = new LevelFactory();
+	
+	private Campaign campaign;
 	
 	public CampaignManager(){
-
+        loadCampaign();
 	}
 	
 	public Level loadLevel(int levelNumber) {
 		if(levelNumber == 1){
-			this.levelLoaded = levelGenerator.createLevelOne();
+			this.levelLoaded = levelFactory.createLevelOne();
 		}else if(levelNumber == 2){
-			this.levelLoaded = levelGenerator.createLevelTwo();
+			this.levelLoaded = levelFactory.createLevelTwo();
 		}else if(levelNumber == 3){
-			this.levelLoaded = levelGenerator.createLevelThree();
+			this.levelLoaded = levelFactory.createLevelThree();
 		}else{
 			 //just in case
-			 this.levelLoaded = levelGenerator.createLevelOne();
+			 this.levelLoaded = levelFactory.createLevelOne();
 		}
 		return this.levelLoaded;
 	}
 	
+	public Level openNextLevel(){
+		
+		return loadLevel(campaign.getCurrentLevel());
+		
+	}
 	  /**
 	   * Prompt the user for a filename, and save the scribble in that file.
 	   * Serialize the vector of lines with an ObjectOutputStream.
@@ -59,6 +71,39 @@ public class CampaignManager {
 	        XStream xstream = new XStream();
 	        loadedLevel = (Level)xstream.fromXML(file);
 	        this.levelLoaded = loadedLevel;
+	        System.out.println("loaded from file: " + file.getAbsoluteFile());    
+	        
+	      }
+	      // Print out exceptions.  We should really display them in a dialog...
+	      catch (Exception e) { System.out.println(e); }
+	     
+	      return this.levelLoaded;
+	  }
+	  
+	  public void saveCampaign() {	  
+		  File file = new File("campaign.xml"); 
+	      try {
+	        // Create the necessary output streams to save the level.
+	        PrintStream out = new PrintStream(file);
+	        XStream xstream = new XStream();
+	        xstream.toXML(campaign, out);
+	        
+	        System.out.println("wrote to file: " + file.getAbsoluteFile());
+	      }
+	      // Print out exceptions.  We should really display them in a dialog...
+	      catch (IOException e) { System.out.println(e); }
+	    
+	  }
+	  
+	  public Level loadCampaign() {
+		File file = new File("campaign.xml"); 
+		  
+		Campaign loadedCampaign = new Campaign();
+		
+	      try {
+	        XStream xstream = new XStream();
+	        loadedCampaign = (Campaign)xstream.fromXML(file);
+	        this.campaign = loadedCampaign;
 	        System.out.println("loaded from file: " + file.getAbsoluteFile());    
 	        
 	      }

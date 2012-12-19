@@ -11,10 +11,11 @@ public class Landscape implements java.io.Serializable{
 	}
 	
 	private LandscapeType landscape;
-	
+
 
 	public Landscape(LandscapeType type) {
 		this.landscape = type;
+		
 	}
 	
 	/* Getters and Setters  */	
