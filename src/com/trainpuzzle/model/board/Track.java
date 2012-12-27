@@ -34,6 +34,10 @@ public class Track implements java.io.Serializable{
 		this.trackType = trackType;
 	}
 	
+	public Track(Connection connection) {
+		connections.add(connection);
+	}
+	
 	public Track(Connection connection1, Connection connection2, TrackType trackType) {
 		connections.add(connection1);
 		connections.add(connection2);
