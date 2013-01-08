@@ -1,50 +1,22 @@
 package com.trainpuzzle.model.level.victory_condition;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AndVictoryCondition implements VictoryCondition, java.io.Serializable {
+public class AndVictoryCondition extends LogicalVictoryCondition implements java.io.Serializable {
+	
 	private static final long serialVersionUID = 1L;
-	private List<VictoryCondition> childConditions = new ArrayList<VictoryCondition>();
-	private boolean conditionSatisfied = false;
 	
+	public AndVictoryCondition() {
+
+	}
 	
-	private void checkChildrenSatisfied() {
-		conditionSatisfied = true;
-		for(VictoryCondition child : childConditions) {
+	protected boolean checkChildrenSatisfied() {
+		boolean satisfied =true;
+		for(VictoryCondition child : this.getChildren()) {
 			if(!child.isSatisfied()) {
-				conditionSatisfied = false;
+				satisfied = false;
+				break;
 			}
 		}
-	}
-
-	
-	public boolean isSatisfied() {
-		checkChildrenSatisfied();
-		return conditionSatisfied;
-	}
-	
-	public void addChild(VictoryCondition child) {
-		childConditions.add(child);
-	}
-
-	
-	public void processEvent(Event event) {
-		for(VictoryCondition child : childConditions) {
-			child.processEvent(event);
-		}
-	}
-
-	
-	public void resetEvents() {
-		 conditionSatisfied = false;
-		 resetChildrenEvents();
-	}
-	
-	private void resetChildrenEvents() {
-		for(VictoryCondition child : childConditions) {
-			child.resetEvents();
-		}
+		return satisfied;
 	}
 	
 }

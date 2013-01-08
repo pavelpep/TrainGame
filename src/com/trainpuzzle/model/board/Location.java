@@ -7,8 +7,6 @@ public class Location implements java.io.Serializable {
 	private int row;
 	private int column;
 	
-	/* Public Interface */
-	
 	public Location(int row, int column) {
 		this.row = row;
 		this.column = column;
@@ -20,14 +18,17 @@ public class Location implements java.io.Serializable {
 	
 	@Override
 	public boolean equals(Object object) {
-		if(object == null){
+		if(object == null) {
 			return false;
 		}
 		Location location = (Location) object;
 		return this.row == location.getRow() && this.column == location.getColumn();
 	}
-
-	/* Getters and Setters */
+	
+	@Override
+	public String toString() {
+		return "(" + this.column + ", " + this.row + ")";
+	}
 	
 	public int getRow() {
 		return row;

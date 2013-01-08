@@ -3,63 +3,78 @@ package com.trainpuzzle.controller;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
-
+import android.util.Log;
 import com.trainpuzzle.exception.CannotPlaceTrackException;
 import com.trainpuzzle.exception.CannotRemoveTrackException;
-import com.trainpuzzle.model.board.Board;
+import com.trainpuzzle.infrastructure.FileManager;
 import com.trainpuzzle.model.board.Track;
 import com.trainpuzzle.model.level.Level;
 import com.trainpuzzle.observe.Observer;
 
-public class GameController{
+public class GameController {
 	
+	private Config config;
 	private Set<Observer> observerList = new HashSet<Observer>();
+	
 	private CampaignManager campaignManager;
+	private LevelManager levelManager;
+	
 	private TrackPlacer trackPlacer;
 	private Simulator simulator;
 	private Level level;
-	private Level loadedLevelWithTrack;
 
+	public GameController() {
+		loadConfig();
+		campaignManager = new CampaignManager(config.campaigns);
+		campaignManager.selectCampaign(config.currentCampaign);
+		levelManager = new LevelManager(campaignManager.getCampaign());
+	}
+	
+	private void loadConfig(){
+		config = FileManager.loadConfig();			
+	}
+	
+	public void startGame() {
+		level = levelManager.getLevel();
+		trackPlacer = new TrackPlacer(level);
+		simulator = new Simulator(level);
+	}
+	
 	public void startGame(int levelNumber) {
-		campaignManager = new CampaignManager();
-		level = campaignManager.loadLevel(levelNumber);
-		trackPlacer = new TrackPlacer(level);
-		simulator = new Simulator(level);
+		levelManager.selectLevel(levelNumber);
+		startGame();
 	}
+
 	public void startGame(File levelFile) {
-		campaignManager = new CampaignManager();
-		level = campaignManager.loadLevel(levelFile);
+		level = FileManager.loadLevel(levelFile.getAbsolutePath());
 		trackPlacer = new TrackPlacer(level);
 		simulator = new Simulator(level);
 	}
 	
-	public Simulator getSimulator() {
-		return simulator;
+	public void changeCampaign(int campaignNumber) {
+		campaignManager.saveCampaign();
+		campaignManager.selectCampaign(campaignNumber);
+		config.currentCampaign = campaignNumber;
+		FileManager.saveConfig(config);
+		levelManager = new LevelManager(campaignManager.getCampaign());
 	}
-	 	
-	/**
-	 * 
-	 * @deprecated this function been replaced with {@link com.trainpuzzle.controller.simulator.run()}
-	 */
-	public void runSimulation() {
-		simulator.run();
-	}
-	/**
-	 * 
-	 * @deprecated this function been replaced with {@link com.trainpuzzle.controller.simulator.reset()}
-	 */
-	public void resetSimulation() {
-	    simulator.reset();
-	}
+
+	public void levelCompleted() {
+		levelManager.levelCompleted();
+		campaignManager.saveCampaign();
+	} 	
 	
+	public void saveCurrentLevelAndCampaign(){
+		getSimulator().reset();
+		getLevelManager().saveCurrentLevel();
+		getCampaignManager().saveCampaign();
+	}
 	public void placeTrack(Track track, int row, int column) {
 		try {
 			trackPlacer.placeTrack(track, row, column);
-			loadedLevelWithTrack = trackPlacer.getLevelWithTrack();
 			
 		} catch (CannotPlaceTrackException e) {
-			
+			Log.e(e.getMessage(),e.toString());
 			for(Observer observer : observerList) {
 				observer.notifyChange(e);
 			}
@@ -69,9 +84,9 @@ public class GameController{
 	public void removeTrack(int row, int column) {
 		try {
 			trackPlacer.removeTrack(row, column);
-			loadedLevelWithTrack = trackPlacer.getLevelWithTrack();
-		} catch (CannotRemoveTrackException e) {
-			
+		}
+		catch (CannotRemoveTrackException e) {
+			Log.e(e.getMessage(),e.toString());
 			for(Observer observer : observerList) {
 				observer.notifyChange(e);
 			}
@@ -79,42 +94,40 @@ public class GameController{
 	}
 	
 	public void removeAllTracks() {
-		for(int row = 0; row < level.getBoard().rows; row++) {
-			for(int column = 0; column < level.getBoard().columns; column++) {
+		for(int row = 0; row < level.getBoard().getRows(); row++) {
+			for(int column = 0; column < level.getBoard().getColumns(); column++) {
 				try {
-					if(level.getBoard().getTile(row, column).hasTrack()){
+					if(level.getBoard().getTile(row, column).hasTrack()) {
 						trackPlacer.removeTrack(row, column);
 					}
 				} catch (CannotRemoveTrackException e) {
-					
+					Log.e(e.getMessage(),e.toString());
 				}
 			}
 		}
-		
 	}
-	
-	/* Getters and Setters */
 	
 	public CampaignManager getCampaignManager() {
 		return campaignManager;
 	}
 	
-	public Board getBlankMap() {
-		return level.getBoard();
+	public void resetCampaign(int campaignNumber) {
+		campaignManager.resetCampaign(campaignNumber);
 	}
 	
-	public Board getTrackMap() {
-		return loadedLevelWithTrack.getBoard();
+	public LevelManager getLevelManager() {
+		return levelManager;
 	}
 	
 	public Level getLevel() {
 		return this.level;
 	}
-
-	public void saveCurrentLevel(File file){
-		campaignManager.saveLevel(file);
+	
+	public Simulator getSimulator() {
+		return simulator;
 	}
 	
+	public void saveCurrentLevel(File file) {
+		FileManager.saveLevel(this.level, file.getAbsolutePath());
+	}	
 }
-
-

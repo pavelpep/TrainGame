@@ -1,6 +1,11 @@
 package com.trainpuzzle.model.level;
 
+import java.util.LinkedList;
+import java.util.List;
 
+import com.trainpuzzle.controller.CargoRequestGenerator;
+import com.trainpuzzle.controller.CargoGenerator;
+import com.trainpuzzle.controller.Simulator;
 import com.trainpuzzle.model.board.Board;
 import com.trainpuzzle.model.board.CompassHeading;
 import com.trainpuzzle.model.board.Location;
@@ -10,7 +15,7 @@ import com.trainpuzzle.model.level.victory_condition.Event;
 import com.trainpuzzle.model.level.victory_condition.LeafVictoryCondition;
 import com.trainpuzzle.model.level.victory_condition.VictoryCondition;
 
-public class Level implements java.io.Serializable{
+public class Level implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -19,26 +24,22 @@ public class Level implements java.io.Serializable{
 	private Location startLocation = new Location(0,0);
 	private VictoryCondition victoryConditions;
 	private Economy economy = new Economy();
+	private List<CargoRequestGenerator> cargorequestors = new LinkedList<CargoRequestGenerator>();
+	private int timeLimit = Simulator.NO_TIME_LIMIT;
+
+	private List<CargoGenerator> cargoGenerators = new LinkedList<CargoGenerator>(); 
 	
-		
 	public Level(int levelNumber) {
 		this.levelNumber = levelNumber;
 		initializeEmptyVictoryConditions();
 	}
 
-	/*public Level(int levelNumber, Board board, Location startLocation, Economy economy) {
+	public Level(int levelNumber, Board board, Location startLocation, 
+			VictoryCondition victoryConditions, Economy economy) {
+		
 		this.levelNumber = levelNumber;
 		this.board = board;
 		this.startLocation = startLocation;
-		initializeEmptyVictoryConditions();
-		this.economy = economy;
-	}*/
-	
-	public Level(int levelNumber, Board board, Location startLocation, VictoryCondition victoryConditions, Economy economy) {
-		this.levelNumber = levelNumber;
-		this.board = board;
-		this.startLocation = startLocation;
-		//initializeEmptyVictoryConditions();
 		this.victoryConditions = victoryConditions; 
 		this.economy = economy;
 	}
@@ -48,11 +49,7 @@ public class Level implements java.io.Serializable{
 		setVictoryConditions(new LeafVictoryCondition(new Event(1, placeholderStation)));
 	}
 	
-	/* 
-	 * **********************
-	 * Getters & Setters	*
-	 * **********************
-	 */
+	 // Getters & Setters
 	
 	public Board getBoard() {
 		return board;
@@ -66,7 +63,6 @@ public class Level implements java.io.Serializable{
 		return this.startLocation;
 	}
 		
-	
 	public int getLevelNumber() {
 		return this.levelNumber;
 	}
@@ -90,4 +86,29 @@ public class Level implements java.io.Serializable{
 	public void setEconomy(Economy economy) {
 		this.economy = economy;
 	}
+
+	public List<CargoRequestGenerator> getCargorequestors() {
+		return cargorequestors;
+	}
+	
+	public List<CargoGenerator> getCargoGenerators() {
+		return cargoGenerators;
+	}
+	
+	public void setCargoGenerators(List<CargoGenerator> cargoGenerators) {
+		this.cargoGenerators = cargoGenerators;
+	}
+
+	public void setCargorequestors(List<CargoRequestGenerator> cargorequestors) {
+		this.cargorequestors = cargorequestors;
+	}
+
+	public int getTimeLimit() {
+		return timeLimit;
+	}
+
+	public void setTimeLimit(int timeLimit) {
+		this.timeLimit = timeLimit;
+	}
+
 }

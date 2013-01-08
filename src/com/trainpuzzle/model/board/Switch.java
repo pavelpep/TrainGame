@@ -1,67 +1,107 @@
 package com.trainpuzzle.model.board;
-import java.util.Iterator;
-import com.trainpuzzle.exception.TrainCrashException;
 
-public class Switch extends Track {
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import com.trainpuzzle.exception.InvalidCommonHeadingException;
+import com.trainpuzzle.exception.TrainCrashException;
+import com.trainpuzzle.observe.Observable;
+import com.trainpuzzle.observe.Observer;
+
+public class Switch extends Track implements Observable{
 
 	private static final long serialVersionUID = 1L;
 	
 	private Iterator<Connection> connectionsIterator;
 	private Connection current;
+	private CompassHeading entrance;
+	
+	private transient Set<Observer> observerList = new HashSet<Observer>();
 	
 	public Switch(Connection connection1, Connection connection2, TrackType trackType) {
 		super(connection1, connection2, trackType);
-		assert(!isValidSwitch(connection1, connection2)): "Invalid switch";
-		goToFirstConnection();
-	}
-	
-	private void goToFirstConnection() {
-		connectionsIterator = connections.iterator();
-		if(connectionsIterator.hasNext()) {
-			current = connectionsIterator.next();
-		} else {
-			// TODO: throw an assertion or exception while there should be 2 connections (more than one connection) in the connection set
-		}
-	}
-	
-	private boolean isValidSwitch(Connection connection1, Connection connection2) {
-		CompassHeading[] compassHeadingPair1 = connection1.getCompassHeadingPair();
-		CompassHeading[] compassHeadingPair2 = connection2.getCompassHeadingPair();
+		assert(trackType == TrackType.CURVELEFT_STRAIGHT_SWITCH
+			|| trackType == TrackType.CURVERIGHT_STRAIGHT_SWITCH): "Invalid trackType";
 		
-		return hasOneSimilarHeading(compassHeadingPair1, compassHeadingPair2);
+		entrance = findValidEntrance(connection1, connection2);
+		resetIteratorAndCurrent();
 	}
 	
-	private boolean hasOneSimilarHeading(CompassHeading[] pair1, CompassHeading[] pair2) {
-		int similarHeadingCounts = 0;
-		for(CompassHeading pair1_heading: pair1) {
-			for(CompassHeading pair2_heading: pair2) {
-				if(pair1_heading == pair2_heading) {
-					similarHeadingCounts++;
-				}
-			}
+	public Switch(Switch switchToCopy) {
+		super(switchToCopy);
+		entrance = switchToCopy.getEntrance();
+		resetIteratorAndCurrent();
+	}
+	
+	public void resetIteratorAndCurrent() {
+		connectionsIterator = connections.iterator();
+		current = nextConnection();
+		notifyAllObservers();
+	}
+	
+	private CompassHeading findValidEntrance(Connection connection1, Connection connection2) {
+		CompassHeading validEntrance = null;
+		try {
+			validEntrance = connection1.findCommonHeading(connection2);
+		} catch (InvalidCommonHeadingException e){
+			assert(false): "Invalid Switch: " + e.getMessage();
 		}
-		return (similarHeadingCounts == 1);
+		return validEntrance;
 	}
 	
 	public Connection getCurrentConnection() {
 		return current;
 	}
-	public CompassHeading getOutboundHeading(CompassHeading inboundHeading) throws TrainCrashException{
+	
+	public CompassHeading getEntrance() {
+		return entrance;
+	}
+	
+	public CompassHeading getOutboundHeading(CompassHeading inboundHeading) throws TrainCrashException {
 		CompassHeading outboundHeading;
-		if(current.isInboundHeading(inboundHeading)) {
-			outboundHeading = current.outboundorInbound(inboundHeading);
-		} else {	// if the current connection does not connect to the inboundHeading, check for all other possible connections  
+		
+		if(isEntrance(inboundHeading)) {
+			outboundHeading = current.outboundForInbound(inboundHeading);
+			toggle();
+		} 
+		else {	
 			outboundHeading = super.getOutboundHeading(inboundHeading);
 		}
-		switchConnection();
 		return outboundHeading;		
 	}
 	
-	public void switchConnection() {
-		if(connectionsIterator.hasNext()) {
-			current = connectionsIterator.next();
-		} else {
-			goToFirstConnection();
-		}
+	public void rotateTrack() {		
+		super.rotateTrack();
+		entrance = entrance.rotate90DegreesClockwise();
 	}
+	
+	public void toggle() {
+		current = nextConnection();
+		notifyAllObservers();
+	}
+	
+	private boolean isEntrance(CompassHeading inboundHeading) {
+		return inboundHeading.opposite() == entrance;
+	}
+	
+	private Connection nextConnection() {
+		if(!connectionsIterator.hasNext()) {
+			connectionsIterator = connections.iterator();
+		}
+		return connectionsIterator.next();
+	}
+	
+	public void register(Observer observer) {
+		if(observerList == null) {
+    	  observerList = new HashSet<Observer>();
+		}
+		observerList.add(observer);
+	}
+		
+	public void notifyAllObservers() {
+		for(Observer observer : observerList) {
+			observer.notifyChange(this);
+		}
+	} 
 }

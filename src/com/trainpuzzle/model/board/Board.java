@@ -1,63 +1,55 @@
 package com.trainpuzzle.model.board;
 
-import java.util.Set;
-import java.util.HashSet;
+import com.trainpuzzle.model.board.Landscape.LandscapeType;
 
-import com.trainpuzzle.observe.Observable;
-import com.trainpuzzle.observe.Observer;
-
-
-public class Board implements Observable, java.io.Serializable {
-
+public class Board implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	public int rows = 15;
-	public int columns = 20;
+	private int rows = 15;
+	private int columns = 20;
 	private Tile[][] tiles;
 	
-	private transient Set<Observer> observerList = new HashSet<Observer>();
-	
 	public Board() {
-		tiles = new Tile[rows][columns];
-		initializeTiles();
+		tiles = new Tile[getRows()][getColumns()];
+		initializeTiles(LandscapeType.GRASS);
 	}
 	
 	public Board(int numRows, int numColumns) {
-		rows = numRows;
-		columns = numColumns;
-		tiles = new Tile[rows][columns];
-		initializeTiles();
+		setRows(numRows);
+		setColumns(numColumns);
+		tiles = new Tile[getRows()][getColumns()];
+		initializeTiles(LandscapeType.GRASS);
 	}
 	
-	public void register(Observer observer){
-	   if(observerList == null){
-		   observerList = new HashSet<Observer>();
-	   }
-		observerList.add(observer);
+	public Board(int numRows, int numColumns, LandscapeType landscapeType) {
+		setRows(numRows);
+		setColumns(numColumns);
+		tiles = new Tile[getRows()][getColumns()];
+		initializeTiles(landscapeType);
 	}
 	
-	public void notifyAllObservers(){
-		for(Observer observer : observerList) {
-			observer.notifyChange(this);
+	public void resetStationCargo(Board orignalBoard) {
+		for(int row = 0; row < getRows(); row++) {
+			for(int column = 0; column < getColumns(); column++) {
+				if(tiles[row][column].hasStationBuilding()) {
+					Station newStation = orignalBoard.getTile(row, column).getStation();
+					Station currentStation = tiles[row][column].getStation();
+					
+					currentStation.setCargo(newStation);
+				}
+			}
 		}
 	}
-		
-	private void initializeTiles() {
-			
-		for(int row = 0; row < rows; row++) {
-			for(int column = 0; column < columns; column++) {
-				tiles[row][column] = new Tile();
+
+	private void initializeTiles(LandscapeType landscapeType) {
+		for(int row = 0; row < getRows(); row++) {
+			for(int column = 0; column < getColumns(); column++) {
+				tiles[row][column] = new Tile(landscapeType);
 			}	
 		}
 	}
-	
-	/**
-	 * Currently used to create some pre-generated track. This will be removed/modified in the future as we expect the
-	 * user to place the track on the map.
-	 */
-
-	
+		
 	public Tile getTile(int row, int column) {
 		return tiles[row][column];
 	}
@@ -65,10 +57,21 @@ public class Board implements Observable, java.io.Serializable {
 	public Tile getTile(Location location) {
 		return tiles[location.getRow()][location.getColumn()];
 	}
-	
-	/*//this replaces tiles instead of modifying. Not needed.
-	public void setTile(Tile tile, int row, int column) {
-		tiles[row][column] = tile;
+
+	public int getRows() {
+		return rows;
 	}
-	*/
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public void setColumns(int columns) {
+		this.columns = columns;
+	}
+	
 }

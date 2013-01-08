@@ -63,7 +63,6 @@ public class LevelLoadedActivity extends Activity implements OnGestureListener, 
         this.train = gameController.getSimulator().getTrain();
         
         //register as observer
-        board.register(this);
         train.register(this);
         
         

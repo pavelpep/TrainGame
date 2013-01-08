@@ -1,50 +1,28 @@
 package com.trainpuzzle.model.level.victory_condition;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class OrVictoryCondition implements VictoryCondition, java.io.Serializable {
+public class OrVictoryCondition extends LogicalVictoryCondition implements java.io.Serializable {
+	
 	private static final long serialVersionUID = 1L;
-	private List<VictoryCondition> childConditions = new ArrayList<VictoryCondition>();
-	private boolean conditionSatisfied = false;
 	
+	public OrVictoryCondition() {
+		//userObject = new TreeNodeUserObject(this,"Choose 1 objective");
+	}
 	
-	private void checkChildrenSatisfied() {
-		for(VictoryCondition child : childConditions) {
-			if(child.isSatisfied()) {
-				conditionSatisfied = true;
-				break;
+	protected boolean checkChildrenSatisfied() {
+		boolean satisfied = false;
+		if(this.getChildren().size() == 0) {
+			satisfied = true;
+		}
+		else {
+			for(VictoryCondition child : this.getChildren()) {
+				if(child.isSatisfied()) {
+					satisfied = true;
+					break;
+				}
 			}
 		}
-	}
-
-	
-	public boolean isSatisfied() {
-		checkChildrenSatisfied();
-		return conditionSatisfied;
-	}
-	
-	public void addChild(VictoryCondition child) {
-		childConditions.add(child);
-	}
-	
-	
-	public void processEvent(Event event) {
-		for(VictoryCondition child : childConditions) {
-			child.processEvent(event);
-		}
-	}
-	
-	
-	public void resetEvents() {
-		 conditionSatisfied = false;
-		 resetChildrenEvents();
-	}
-	
-	private void resetChildrenEvents() {
-		for(VictoryCondition child : childConditions) {
-			child.resetEvents();
-		}
+		return satisfied;
 	}
 
 }

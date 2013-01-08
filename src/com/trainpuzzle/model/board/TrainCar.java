@@ -2,11 +2,10 @@ package com.trainpuzzle.model.board;
 
 public class TrainCar {
 
-
 	private Location location; 
 	private CompassHeading heading;
-	
-	
+	private Cargo cargo;
+
 	public TrainCar() {
 		
 	}
@@ -16,9 +15,25 @@ public class TrainCar {
 		setHeading(heading);
 	}
 	
+	public boolean hasCargo() {
+		return cargo != null;
+	}
 	
-	/*Getters and Setters */
+	public void addCargo(Cargo cargo) {
+		this.cargo = cargo;
+	}
+	
+	public Cargo dropCargo() {
+		Cargo currentCargo = cargo;
+		cargo = null;
+		
+		return currentCargo;
+	}
 
+	public void resetCargo() {
+		cargo = null;
+	}
+	
 	public Location getLocation() {
 		return location;
 	}
@@ -33,5 +48,9 @@ public class TrainCar {
 	
 	public void setHeading(CompassHeading heading) {
 		this.heading = heading;
+	}	
+	public Cargo getCargo() {
+		return cargo;
 	}
 }
+

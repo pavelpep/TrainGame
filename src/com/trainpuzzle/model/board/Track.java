@@ -1,29 +1,26 @@
 package com.trainpuzzle.model.board;
 
 import java.util.HashSet;
+
 import java.util.Set;
 
 
 import com.trainpuzzle.exception.TrainCrashException;
 
-public class Track implements java.io.Serializable{
+public class Track implements java.io.Serializable {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;	
 	private boolean isStationTrack = false;
 	private boolean removable = true;
-	
 	protected Set<Connection> connections = new HashSet<Connection>();
 	protected TrackType trackType = TrackType.STRAIGHT_TRACK;
-	
-	/* Public Interface */
-	
+		
 	public Track(Track trackToCopy) {
 		removeConnections();
 		for(Connection connection : trackToCopy.getConnections()) {
 			addConnection(connection.getCompassHeadingPair()[0], connection.getCompassHeadingPair()[1]);
 		}
-		if(trackToCopy.isUnremovable()){
+		if(trackToCopy.isUnremovable()) {
 			setUnremoveable();
 		}
 		trackType = trackToCopy.getTrackType();
@@ -32,10 +29,6 @@ public class Track implements java.io.Serializable{
 	public Track(Connection connection, TrackType trackType) {
 		connections.add(connection);
 		this.trackType = trackType;
-	}
-	
-	public Track(Connection connection) {
-		connections.add(connection);
 	}
 	
 	public Track(Connection connection1, Connection connection2, TrackType trackType) {
@@ -95,7 +88,7 @@ public class Track implements java.io.Serializable{
 	public CompassHeading getOutboundHeading(CompassHeading inboundHeading) throws TrainCrashException {
 		for(Connection connection : connections) {
 			if(connection.isInboundHeading(inboundHeading)) {
-				return connection.outboundorInbound(inboundHeading);
+				return connection.outboundForInbound(inboundHeading);
 			}
 		}
 		throw new TrainCrashException();

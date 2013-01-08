@@ -83,9 +83,9 @@ public void onDraw(Canvas canvas)
 	canvas.drawColor(Color.BLACK);
 	
 
-	for (int x = 0; x < board.columns; x++)
+	for (int x = 0; x < board.getColumns(); x++)
 	{
-		for (int y = 0; y < board.rows; y++)
+		for (int y = 0; y < board.getRows(); y++)
 		{
 	    //Log.d("Draw tile:", " " + x + "," + y);
 		
@@ -330,7 +330,7 @@ public void handleScroll(float distX, float distY)
 
       if(distX > 20.0)
       {
-           if(scrollX < board.columns*80 - this.getWidth())
+           if(scrollX < board.getColumns()*80 - this.getWidth())
            {
                 scrollX += 40;
            }
@@ -347,7 +347,7 @@ public void handleScroll(float distX, float distY)
       // Y-AXIS //////////////////////////////////
       if(distY > 20.0)
       {
-           if(scrollY < board.rows*80 - this.getHeight())
+           if(scrollY < board.getRows()*80 - this.getHeight())
            {
                 scrollY += 40;
            }
@@ -360,7 +360,7 @@ public void handleScroll(float distX, float distY)
            }
       }              
       ////////////////////////////////////////////
-      if((scrollX <= board.columns*80) && (scrollY <= board.rows*80))
+      if((scrollX <= board.getColumns()*80) && (scrollY <= board.getRows()*80))
       {
            //adapt = Bitmap.createBitmap(bmp, scrollX, scrollY, 320, 480);
            invalidate();

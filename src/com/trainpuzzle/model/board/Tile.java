@@ -3,37 +3,39 @@ package com.trainpuzzle.model.board;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.trainpuzzle.model.board.Landscape.LandscapeType;
 import com.trainpuzzle.observe.Observable;
 import com.trainpuzzle.observe.Observer;
 
-
 public class Tile implements Observable, java.io.Serializable {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;	
 	private int elevation;
 	private Track track;
 	private Obstacle obstacle;
 	private Landscape landscape;
+
 	private Station station;
-	
 	private transient Set<Observer> observerList = new HashSet<Observer>();
 
-  /* Public Interface */
-
-	public Tile(){	
+	public Tile() {	
 		elevation = 0;
 		landscape = new Landscape(Landscape.LandscapeType.GRASS);
 	}
 	
-	public void register(Observer observer){
-      if(observerList == null){
+	public Tile(LandscapeType landscapeType) {	
+		elevation = 0;
+		landscape = new Landscape(landscapeType);
+	}
+	
+	public void register(Observer observer) {
+      if(observerList == null) {
     	  observerList = new HashSet<Observer>();
       }
 		observerList.add(observer);
 	}
 	
-	public void notifyAllObservers(){
+	public void notifyAllObservers() {
 		for(Observer observer : observerList) {
 			observer.notifyChange(this);
 		}
@@ -45,15 +47,15 @@ public class Tile implements Observable, java.io.Serializable {
 	}
 	
 	public boolean hasTrack() {
-		return (track != null);
+		return track != null;
 	}	
 	
 	public boolean hasLandscape() {
-		return (landscape != null);
+		return landscape != null;
 	}
 	
 	public boolean hasObstacle() {
-		return (obstacle != null);
+		return obstacle != null;
 	}
 	
 	public boolean hasStationBuilding() {
@@ -64,8 +66,7 @@ public class Tile implements Observable, java.io.Serializable {
 		return (station != null) && (track != null);
 	}
 	
-	
-/* Getters and Setters */
+	/* Getters and Setters */
 	
 	public int getElevation() {
 		return elevation;
@@ -128,4 +129,7 @@ public class Tile implements Observable, java.io.Serializable {
 		return obstacle.getType();
 	}
 	
+	public Landscape getLandscape() {
+		return landscape;
+	}
 }
